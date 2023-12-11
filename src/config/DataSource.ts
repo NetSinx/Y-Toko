@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { User } from '../models/User';
+import { Product } from '../models/Product';
+import { Category } from '../models/Category';
+import { Comment } from '../models/Comment';
 
 dotenv.config({path: './src/.env'});
 
@@ -25,7 +28,7 @@ export class Config {
       username: this.username,
       password: this.password,
       database: this.database,
-      entities: [User],
+      entities: [User, Product, Category, Comment],
       migrations: ["./src/migrations/*.ts"],
       synchronize: false,
       logging: true

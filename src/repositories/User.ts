@@ -1,9 +1,9 @@
 import { DataSource } from "typeorm";
 import { User } from "../models/User";
 import { Config } from "../config/DataSource";
-import { IRepository } from "../interfaces/Repository";
+import { IUserRepository } from "../interfaces/Repository";
 
-export class UserRepository implements IRepository {
+export class UserRepository implements IUserRepository {
   db: Promise<DataSource>;
 
   constructor() {
@@ -30,13 +30,28 @@ export class UserRepository implements IRepository {
     return await userRepo.save(saveUser);
   }
 
-  updateUser(id: number): User {
-    throw new Error("Method not implemented.");
+  async updateUser(id: number, user: User): Promise<User> {
+    const userRepo = (await this.db).getRepository(User);
+    await userRepo.createQueryBuilder().update().where("id = :id", {id: id}).set(user)
+    .execute();
+    
+    user.id = id;
+
+    return user;
   }
-  deleteUser(id: number): number {
-    throw new Error("Method not implemented.");
+
+  async deleteUser(id: number): Promise<number> {
+    const userRepo = (await this.db).getRepository(User);
+    const delUser = await userRepo.createQueryBuilder().delete()
+    .where("id = :id", {id: id}).execute();
+
+    return delUser.affected!;
   }
-  getUser(id: number): User {
-    throw new Error("Method not implemented.");
+  
+  async getUser(id: number): Promise<User | null> {
+    const userRepo = (await this.db).getRepository(User);
+    const user: User | null = await userRepo.createQueryBuilder().select().where("id = :id", {id: id}).getOne();
+
+    return user;
   }
 }

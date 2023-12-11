@@ -1,13 +1,13 @@
-import { IService } from "../interfaces/Service";
+import { IUserService } from "../interfaces/Service";
 import { User } from "../models/User";
 import { UserRepository } from "../repositories/User";
 import bcrypt from 'bcrypt';
 
-export class UserService implements IService {
+export class UserService implements IUserService {
   userRepo: UserRepository;
 
   constructor() {
-    this.userRepo = new UserRepository();
+    this.userRepo = new UserRepository;
   }
 
   async listUsers(): Promise<User[]> {
@@ -17,27 +17,56 @@ export class UserService implements IService {
   }
 
   async addUser(user: User): Promise<User | Error> {
-    const hashPassword = await bcrypt.hash(user.password, 12);
-    user.password = hashPassword;
+    user.password = await bcrypt.hash(user.password, 12);
 
-    const userRepo: User | Error = await this.userRepo.addUser(user).catch(() => {
+    const addUser: User | Error = await this.userRepo.addUser(user).catch(() => {
       return Error("User was existing!");
     });
 
-    if (userRepo instanceof Error) {
-      return userRepo;
+    if (addUser instanceof Error) {
+      return addUser;
     }
     
-    return userRepo;
+    return addUser;
   }
-  updateUser(id: number): User {
-    throw new Error("Method not implemented.");
+
+  async updateUser(id: number, user: User): Promise<User | null |Error> {
+    const findUser: User | null = await this.userRepo.getUser(id);
+    if (!findUser) {
+      return findUser;
+    }
+
+    user.password = await bcrypt.hash(user.password, 12);
+
+    const updUser: User | Error = await this.userRepo.updateUser(id, user).catch(() => {
+      return Error("User was existing!");
+    });
+    
+    if (updUser instanceof Error) {
+      return updUser;
+    }
+
+    return updUser;
   }
-  deleteUser(id: number): number {
-    throw new Error("Method not implemented.");
+
+  async deleteUser(id: number): Promise<number> {
+    const delUser: number = await this.userRepo.deleteUser(id);
+
+    if (delUser === 0) {
+      return delUser;
+    }
+
+    return delUser;
   }
-  getUser(id: number): User {
-    throw new Error("Method not implemented.");
+  
+  async getUser(id: number): Promise<User | null> {
+    const getUser: User | null = await this.userRepo.getUser(id);
+
+    if (!getUser) {
+      return getUser;
+    }
+
+    return getUser;
   }
 
 }
