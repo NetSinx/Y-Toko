@@ -7,7 +7,7 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'varchar', length: 200})
+  @Column({type: 'varchar', unique: true, length: 200})
   nama: string;
 
   @Column({type: 'varchar', length: 200})
@@ -19,6 +19,9 @@ export class Product {
   @Column({type: 'varchar', length: 300})
   deskripsi: string;
 
-  @OneToMany(() => Comment, (comment) => comment)
+  @Column({type: 'integer'})
+  harga: number;
+
+  @OneToMany(() => Comment, (comment) => comment.produk)
   komentar: Comment[];
 }

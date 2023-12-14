@@ -15,3 +15,11 @@ export interface IProductController {
   deleteProduct(req: Request, res: Response): Promise<void>;
   getProduct(req: Request, res: Response): Promise<void>;
 }
+
+export interface ICategoryController {
+  listCategories(req: Request, res: Response): Promise<void>;
+  addCategory(req: Request, res: Response): Promise<void>;
+  updateCategory(req: Request, res: Response): Promise<void>;
+  deleteCategory(req: Request, res: Response): Promise<void>;
+  getCategory(req: Request, res: Response): Promise<void>;
+}

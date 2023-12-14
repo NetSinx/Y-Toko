@@ -18,19 +18,149 @@ export class ProductController implements IProductController {
     res.json(respToClient);
   }
 
-  addProduct(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async addProduct(req: Request, res: Response): Promise<void> {
+    const productService: ProductService = new ProductService;
+    const addProduct: Product | Error = await productService.addProduct(req.body);
+
+    let respToClient: ResponseClient;
+
+    if (addProduct instanceof Error) {
+      respToClient = {
+        code: res.status(409).statusCode,
+        status: "Data Conflict",
+        message: addProduct.message
+      }
+
+      res.status(409).json(respToClient);
+      return;
+    }
+
+    const product: Product = {
+      id: addProduct.id,
+      nama: addProduct.nama,
+      gambar: addProduct.gambar,
+      kategori: addProduct.kategori,
+      deskripsi: addProduct.deskripsi,
+      harga: addProduct.harga,
+      komentar: addProduct.komentar
+    }
+
+    respToClient = {
+      code: res.statusCode,
+      status: "OK",
+      data: product
+    }
+
+    res.json(respToClient);
   }
 
-  updateProduct(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async updateProduct(req: Request, res: Response): Promise<void> {
+    const productService: ProductService = new ProductService;
+    const id: number = Number(req.params.id);
+    const updProduct = await productService.updateProduct(id, req.body);
+
+    let respToClient: ResponseClient;
+
+    if (updProduct instanceof Error) {
+      respToClient = {
+        code: res.status(409).statusCode,
+        status: "Data Conflict",
+        message: "Product was existing!"
+      }
+
+      res.status(409).json(respToClient);
+      return;
+    } else if (!updProduct) {
+      respToClient = {
+        code: res.status(404).statusCode,
+        status: "Not Found",
+        message: "Product not found!"
+      }
+
+      res.status(404).json(respToClient);
+      return;
+    } else {
+      const product: Product = {
+        id: id,
+        nama: updProduct.nama,
+        gambar: updProduct.gambar,
+        kategori: updProduct.kategori,
+        deskripsi: updProduct.deskripsi,
+        harga: updProduct.harga,
+        komentar: updProduct.komentar
+      }
+
+      respToClient = {
+        code: res.statusCode,
+        status: "OK",
+        data: product
+      }
+
+      res.json(respToClient);
+    }
   }
 
-  deleteProduct(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteProduct(req: Request, res: Response): Promise<void> {
+    const productService: ProductService = new ProductService;
+    const id: number = Number(req.params.id);
+    const delProduct: number = await productService.deleteProduct(id);
+
+    let respToClient: ResponseClient;
+
+    if (delProduct === 0) {
+      respToClient = {
+        code: res.status(404).statusCode,
+        status: "Not Found",
+        message: "Product not found!"
+      }
+
+      res.status(404).json(respToClient);
+      return;
+    }
+
+    respToClient = {
+      code: res.statusCode,
+      status: "OK",
+      message: "Product deleted successfully!"
+    }
+
+    res.json(respToClient);
   }
 
-  getProduct(req: Request, res: Response): Promise<void> {
-    throw new Error("Method not implemented.");
+  async getProduct(req: Request, res: Response): Promise<void> {
+    const productService: ProductService = new ProductService;
+    const id: number = Number(req.params.id);
+    const getProduct: Product | null = await productService.getProduct(id);
+
+    let respToClient: ResponseClient;
+
+    if (!getProduct) {
+      respToClient = {
+        code: res.status(404).statusCode,
+        status: "Not Found",
+        message: "Product not found!"
+      }
+
+      res.status(404).json(respToClient);
+      return;
+    }
+
+    const product: Product = {
+      id: getProduct.id,
+      nama: getProduct.nama,
+      gambar: getProduct.gambar,
+      deskripsi: getProduct.deskripsi,
+      kategori: getProduct.kategori,
+      harga: getProduct.harga,
+      komentar: getProduct.komentar
+    }
+
+    respToClient = {
+      code: res.statusCode,
+      status: "OK",
+      data: product
+    }
+
+    res.json(respToClient);
   }
 }

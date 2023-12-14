@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/index.ts",
-    "migrate-gen": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/User -d ./src/config/DataSource.ts",
+    "migrate-gen": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/migrations -d ./src/config/DataSource.ts",
     "migrate-run": "npx typeorm-ts-node-commonjs migration:run -d ./src/config/DataSource.ts",
-    "migrate-revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/config/DataSource.ts"
+    "migrate-revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/config/DataSource.ts",
+    "schema-drop": "npx typeorm-ts-node-commonjs schema:drop -d ./src/config/DataSource.ts"
   },
   "keywords": [
     "e-commerce",

@@ -16,19 +16,48 @@ export class ProductService implements IProductService {
     return listProducts;
   }
 
-  addProduct(product: Product): Promise<Product | Error> {
-    throw new Error("Method not implemented.");
+  async addProduct(product: Product): Promise<Product | Error> {
+    const addProduct = await this.productRepo.addProduct(product).catch((err) => {
+      return Error("Product was existing!");
+    });
+
+    if (addProduct instanceof Error) {
+      return addProduct;
+    } else {
+      return addProduct;
+    }
   }
 
-  updateProduct(id: number, product: Product): Promise<Product | Error | null> {
-    throw new Error("Method not implemented.");
+  async updateProduct(id: number, product: Product): Promise<Product | Error | null> {
+    const findProduct: Product | null = await this.productRepo.getProduct(id);
+
+    if (!findProduct) {
+      return findProduct;
+    }
+
+    const updProduct = await this.productRepo.updateProduct(id, product).catch(() => {
+      return Error("Product was existing!");
+    })
+
+    if (updProduct instanceof Error) {
+      return updProduct;
+    } else {
+      return updProduct;
+    }
   }
 
-  deleteProduct(id: number): Promise<number> {
-    throw new Error("Method not implemented.");
+  async deleteProduct(id: number): Promise<number> {
+    const findProduct: Product | null = await this.productRepo.getProduct(id);
+    if (!findProduct) {
+      return 0;
+    }
+
+    return await this.productRepo.deleteProduct(id);
   }
 
-  getProduct(id: number): Promise<Product | null> {
-    throw new Error("Method not implemented.");
+  async getProduct(id: number): Promise<Product | null> {
+    const getProduct: Product | null = await this.productRepo.getProduct(id);
+
+    return getProduct;
   }
 }

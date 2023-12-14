@@ -20,14 +20,7 @@ export class UserRepository implements IUserRepository {
   async addUser(user: User): Promise<User> {
     const userRepo = (await this.db).getRepository(User);
 
-    const saveUser = {
-      nama: user.nama,
-      username: user.username,
-      email: user.email,
-      password: user.password
-    }
-
-    return await userRepo.save(saveUser);
+    return await userRepo.save(user);
   }
 
   async updateUser(id: number, user: User): Promise<User> {
