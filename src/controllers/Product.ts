@@ -3,6 +3,7 @@ import { IProductController } from "../interfaces/Controller";
 import { ProductService } from "../services/Product";
 import { ResponseClient } from "../interfaces/Response";
 import { Product } from "../models/Product";
+import { validate } from "class-validator";
 
 export class ProductController implements IProductController {
   async listProducts(req: Request, res: Response): Promise<void> {
@@ -20,84 +21,126 @@ export class ProductController implements IProductController {
 
   async addProduct(req: Request, res: Response): Promise<void> {
     const productService: ProductService = new ProductService;
-    const addProduct: Product | Error = await productService.addProduct(req.body);
+    const product: Product = new Product;
+    product.nama = req.body.nama;
+    product.gambar = req.body.gambar;
+    product.deskripsi = req.body.deskripsi;
+    product.kategori = req.body.kategori;
+    product.harga = req.body.harga;
+    product.komentar = req.body.komentar;
 
-    let respToClient: ResponseClient;
+    validate(product).then(async err => {
+      let respToClient: ResponseClient;
 
-    if (addProduct instanceof Error) {
-      respToClient = {
-        code: res.status(409).statusCode,
-        status: "Data Conflict",
-        message: addProduct.message
+      if (err.length > 0) {
+        respToClient = {
+          code: res.status(400).statusCode,
+          status: "Bad Request",
+          message: err
+        };
+  
+        res.status(409).json(respToClient);
+        return;
+      } else {
+        const addProduct: Product | Error = await productService.addProduct(req.body);
+
+        if (addProduct instanceof Error) {
+          respToClient = {
+            code: res.status(409).statusCode,
+            status: "Data Conflict",
+            message: addProduct.message
+          };
+
+          res.status(409).json(respToClient);
+          return;
+        }
+
+        const product: Product = {
+          id: addProduct.id,
+          nama: addProduct.nama,
+          gambar: addProduct.gambar,
+          kategori: addProduct.kategori,
+          deskripsi: addProduct.deskripsi,
+          harga: addProduct.harga,
+          komentar: addProduct.komentar
+        }
+
+        respToClient = {
+          code: res.statusCode,
+          status: "OK",
+          data: product
+        };
+
+        res.json(respToClient);
       }
-
-      res.status(409).json(respToClient);
-      return;
-    }
-
-    const product: Product = {
-      id: addProduct.id,
-      nama: addProduct.nama,
-      gambar: addProduct.gambar,
-      kategori: addProduct.kategori,
-      deskripsi: addProduct.deskripsi,
-      harga: addProduct.harga,
-      komentar: addProduct.komentar
-    }
-
-    respToClient = {
-      code: res.statusCode,
-      status: "OK",
-      data: product
-    }
-
-    res.json(respToClient);
+    });
   }
 
   async updateProduct(req: Request, res: Response): Promise<void> {
     const productService: ProductService = new ProductService;
     const id: number = Number(req.params.id);
-    const updProduct = await productService.updateProduct(id, req.body);
+    const product: Product = new Product;
+    product.nama = req.body.nama;
+    product.gambar = req.body.gambar;
+    product.deskripsi = req.body.deskripsi;
+    product.kategori = req.body.kategori;
+    product.harga = req.body.harga;
+    product.komentar = req.body.komentar;
 
-    let respToClient: ResponseClient;
+    validate(product).then(async err => {
+      let respToClient: ResponseClient;
 
-    if (updProduct instanceof Error) {
-      respToClient = {
-        code: res.status(409).statusCode,
-        status: "Data Conflict",
-        message: "Product was existing!"
+      if (err.length > 0) {
+        respToClient = {
+          code: res.status(400).statusCode,
+          status: "Bad Request",
+          message: err
+        };
+
+        res.status(400).json(respToClient);
+        return;
+      } else {
+        const updProduct = await productService.updateProduct(id, req.body);
+
+        if (updProduct instanceof Error) {
+          respToClient = {
+            code: res.status(409).statusCode,
+            status: "Data Conflict",
+            message: updProduct.message
+          };
+
+          res.status(409).json(respToClient);
+          return;
+        } else if (!updProduct) {
+          respToClient = {
+            code: res.status(404).statusCode,
+            status: "Not Found",
+            message: "Product not found!"
+          }
+
+          res.status(404).json(respToClient);
+          return;
+        } else {
+          const product: Product = {
+            id: id,
+            nama: updProduct.nama,
+            gambar: updProduct.gambar,
+            kategori: updProduct.kategori,
+            deskripsi: updProduct.deskripsi,
+            harga: updProduct.harga,
+            komentar: updProduct.komentar
+          }
+
+          respToClient = {
+            code: res.statusCode,
+            status: "OK",
+            data: product
+          };
+
+          res.json(respToClient);
+        }
       }
-
-      res.status(409).json(respToClient);
-      return;
-    } else if (!updProduct) {
-      respToClient = {
-        code: res.status(404).statusCode,
-        status: "Not Found",
-        message: "Product not found!"
-      }
-
-      res.status(404).json(respToClient);
-      return;
-    } else {
-      const product: Product = {
-        id: id,
-        nama: updProduct.nama,
-        gambar: updProduct.gambar,
-        kategori: updProduct.kategori,
-        deskripsi: updProduct.deskripsi,
-        harga: updProduct.harga,
-        komentar: updProduct.komentar
-      }
-
-      respToClient = {
-        code: res.statusCode,
-        status: "OK",
-        data: product
-      }
-
-      res.json(respToClient);
-    }
+    })
   }
 
   async deleteProduct(req: Request, res: Response): Promise<void> {
@@ -112,7 +155,7 @@ export class ProductController implements IProductController {
         code: res.status(404).statusCode,
         status: "Not Found",
         message: "Product not found!"
-      }
+      };
 
       res.status(404).json(respToClient);
       return;
@@ -122,7 +165,7 @@ export class ProductController implements IProductController {
       code: res.statusCode,
       status: "OK",
       message: "Product deleted successfully!"
-    }
+    };
 
     res.json(respToClient);
   }
@@ -139,7 +182,7 @@ export class ProductController implements IProductController {
         code: res.status(404).statusCode,
         status: "Not Found",
         message: "Product not found!"
-      }
+      };
 
       res.status(404).json(respToClient);
       return;
@@ -159,7 +202,7 @@ export class ProductController implements IProductController {
       code: res.statusCode,
       status: "OK",
       data: product
-    }
+    };
 
     res.json(respToClient);
   }

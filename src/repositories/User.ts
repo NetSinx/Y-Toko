@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import { User } from "../models/User";
 import { Config } from "../config/DataSource";
 import { IUserRepository } from "../interfaces/Repository";
+import { UserLogin } from "../models/UserLogin";
 
 export class UserRepository implements IUserRepository {
   db: Promise<DataSource>;
@@ -9,18 +10,26 @@ export class UserRepository implements IUserRepository {
   constructor() {
     this.db = new Config().initDB();
   }
+  
+  async loginUser(user: UserLogin): Promise<User | null> {
+    const userRepo = (await this.db).getRepository(User);
+    const loginUser = await userRepo.createQueryBuilder().select().where("email = :email", {email: user.email}).getOne();
+
+    return loginUser;
+  }
 
   async listUsers(): Promise<User[]> {
     const userRepo = (await this.db).getRepository(User);
-    const listUsers = await userRepo.createQueryBuilder().select().getMany();
+    const listUsers = await userRepo.createQueryBuilder("user").select().leftJoinAndSelect("user.komentar", "komentar").getMany();
 
     return listUsers;
   }
 
-  async addUser(user: User): Promise<User> {
+  async registerUser(user: User): Promise<User> {
     const userRepo = (await this.db).getRepository(User);
+    await userRepo.createQueryBuilder().insert().values(user).execute();
 
-    return await userRepo.save(user);
+    return user;
   }
 
   async updateUser(id: number, user: User): Promise<User> {
@@ -43,7 +52,7 @@ export class UserRepository implements IUserRepository {
   
   async getUser(id: number): Promise<User | null> {
     const userRepo = (await this.db).getRepository(User);
-    const user: User | null = await userRepo.createQueryBuilder().select().where("id = :id", {id: id}).getOne();
+    const user: User | null = await userRepo.createQueryBuilder("user").select().leftJoinAndSelect("user.komentar", "komentar").where("user.id = :id", {id: id}).getOne();
 
     return user;
   }

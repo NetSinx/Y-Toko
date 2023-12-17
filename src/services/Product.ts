@@ -1,6 +1,8 @@
 import { IProductService } from "../interfaces/Service";
+import { Category } from "../models/Category";
 import { Product } from "../models/Product";
 import { User } from "../models/User";
+import { CategoryRepository } from "../repositories/Category";
 import { ProductRepository } from "../repositories/Product";
 
 export class ProductService implements IProductService {
@@ -17,9 +19,7 @@ export class ProductService implements IProductService {
   }
 
   async addProduct(product: Product): Promise<Product | Error> {
-    const addProduct = await this.productRepo.addProduct(product).catch((err) => {
-      return Error("Product was existing!");
-    });
+    let addProduct: Product | Error = await this.productRepo.addProduct(product).catch(() => Error("Product was existing!"));
 
     if (addProduct instanceof Error) {
       return addProduct;
@@ -35,15 +35,23 @@ export class ProductService implements IProductService {
       return findProduct;
     }
 
-    const updProduct = await this.productRepo.updateProduct(id, product).catch(() => {
-      return Error("Product was existing!");
-    })
+    const updProduct: Product | Error | null = await this.productRepo.updateProduct(id, product).catch(() => Error("Product was existing!"));
 
     if (updProduct instanceof Error) {
       return updProduct;
-    } else {
-      return updProduct;
     }
+
+    product = {
+      id: id,
+      nama: updProduct.nama,
+      gambar: updProduct.gambar,
+      deskripsi: updProduct.deskripsi,
+      kategori: updProduct.kategori,
+      harga: updProduct.harga,
+      komentar: updProduct.komentar
+    }
+    
+    return product;
   }
 
   async deleteProduct(id: number): Promise<number> {

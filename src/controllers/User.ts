@@ -3,8 +3,68 @@ import { ResponseClient } from "../interfaces/Response";
 import { UserService } from "../services/User";
 import { User } from "../models/User";
 import { IUserController } from "../interfaces/Controller";
+import { validate } from "class-validator";
+import { UserLogin } from "../models/UserLogin";
+import { JWTAuthToken } from "../middleware/JWTAuthToken";
 
 export class UserController implements IUserController {
+  async loginUser(req: Request, res: Response): Promise<void> {
+    const { email, password } = req.body;
+    
+    const userLogin: UserLogin = new UserLogin;
+    userLogin.email = email;
+    userLogin.password = password;
+
+    validate(userLogin).then(async err => {
+      let respToClient: ResponseClient;
+
+      if (err.length > 0) {
+        respToClient = {
+          code: res.status(400).statusCode,
+          status: "Bad Request",
+          message: err
+        };
+    
+        res.status(400).json(respToClient);
+        return;
+      } else {
+        const userService: UserService = new UserService;
+        const login: User | null = await userService.loginUser(userLogin);
+        
+        if (!login) {
+          respToClient = {
+            code: res.status(401).statusCode,
+            status: "Unauthorized",
+            message: err
+          };
+      
+          res.status(401).json(respToClient);
+        } else {
+          if (login.email === "yasin03ckm@gmail.com") {
+            const jwtToken: string = await new JWTAuthToken().signJWT({isAdmin: true});
+    
+            const respToken = {
+              code: res.statusCode,
+              status: "OK",
+              token: jwtToken
+            }
+        
+            res.json(respToken);
+          } else {
+            const jwtToken: string = await new JWTAuthToken().signJWT({isAdmin: false});
+    
+            const respToken = {
+              code: res.statusCode,
+              status: "OK",
+              token: jwtToken
+            }
+        
+            res.json(respToken);
+          }
+        }
+      }
+    })
+  }
   async listUsers(req: Request, res: Response): Promise<void> {
     const userService: UserService = new UserService;
     const listUsers: User[] = await userService.listUsers();
@@ -17,78 +77,106 @@ export class UserController implements IUserController {
     res.status(200).json(respToClient);
   }
 
-  async addUser(req: Request, res: Response): Promise<void> {
-    const userService: UserService = new UserService;
-    const reqAddUser: any = req.body;
-    const addUser: User | Error = await userService.addUser(reqAddUser);
+  async registerUser(req: Request, res: Response): Promise<void> {
+    const user: User = new User;
+    user.nama = req.body.nama;
+    user.username = req.body.username;
+    user.email = req.body.email;
+    user.password = req.body.password;
 
-    if (addUser instanceof Error) {
-      const respAddUser: ResponseClient = {
-        code: res.status(409).statusCode,
-        status: "Data Conflict",
-        message: addUser.message
+    validate(user).then(async err => {
+      let respToClient: ResponseClient;
+
+      if (err.length > 0) {
+        respToClient = {
+          code: res.status(400).statusCode,
+          status: "Bad Request",
+          message: err
+        };
+    
+        res.status(400).json(respToClient);
+        return;
+      } else {
+        const userService: UserService = new UserService;
+        const addUser: User | Error = await userService.registerUser(req.body);
+
+        if (addUser instanceof Error) {
+          const respAddUser: ResponseClient = {
+            code: res.status(409).statusCode,
+            status: "Data Conflict",
+            message: addUser.message
+          };
+      
+          res.status(409).json(respAddUser);
+          return;
+        } else {
+          const respAddUser: ResponseClient = {
+            code: res.statusCode,
+            status: "OK",
+            data: addUser
+          }
+      
+          res.json(respAddUser);
+        }
       }
-  
-      res.status(409).json(respAddUser);
-      return;
-    } else {
-      const user = {
-        id: addUser.id,
-        nama: addUser.nama,
-        username: addUser.username,
-        email: addUser.email,
-        password: addUser.password,
-      }
-  
-      const respAddUser: ResponseClient = {
-        code: res.statusCode,
-        status: "OK",
-        data: user
-      }
-  
-      res.json(respAddUser);
-    }
+    })
   }
 
   async updateUser(req: Request, res: Response): Promise<void> {
     const userService: UserService = new UserService;
     const id: number = Number(req.params.id);
-    const reqUpdUser: User = req.body;
-    const updUser: User | null | Error = await userService.updateUser(id, reqUpdUser);
+
+    const user: User = new User;
+    user.nama = req.body.nama;
+    user.username = req.body.username;
+    user.email = req.body.email;
+    user.password = req.body.password;
+
+    validate(user).then(async err => {
+      let respToClient: ResponseClient;
+
+      if (err.length > 0) {
+        respToClient = {
+          code: res.status(400).statusCode,
+          status: "Bad Request",
+          message: err
+        };
+  
+        res.status(400).json(respToClient);
+        return;
+      } else {
+        const updUser: User | null | Error = await userService.updateUser(id, req.body);
+        
+        if (updUser instanceof Error) {
+          respToClient = {
+            code: res.status(409).statusCode,
+            status: "Data Conflict",
+            message: updUser.message
+          };
+
+          res.status(409).json(respToClient);
+          return;
+        } else if (!updUser) {
+          respToClient = {
+            code: res.status(404).statusCode,
+            status: "Not Found",
+            message: "User not found!"
+          }
+
+          res.status(404).json(respToClient);
+          return;
+        } else {
+          respToClient = {
+            code: res.statusCode,
+            status: "OK",
+            data: updUser
+          }
+
+          res.json(respToClient);
+        }
+      }
+    })
     
-    if (updUser instanceof Error) {
-      const respUpdUser: ResponseClient = {
-        code: res.status(409).statusCode,
-        status: "Data Conflict",
-        message: updUser.message
-      }
-
-      res.status(409).json(respUpdUser);
-    } else if (!updUser) {
-      const respUpdUser: ResponseClient = {
-        code: res.status(404).statusCode,
-        status: "Not Found",
-        message: "User not found!"
-      }
-
-      res.status(404).json(respUpdUser);
-    } else {
-      const user = {
-        id: updUser.id,
-        nama: updUser.nama,
-        username: updUser.username,
-        email: updUser.email,
-        password: updUser.password,
-      }
-
-      const respToClient: ResponseClient = {
-        code: res.statusCode,
-        status: "OK",
-        data: user
-      }
-
-      res.json(respToClient);
-    }
   }
 
   async deleteUser(req: Request, res: Response): Promise<void> {

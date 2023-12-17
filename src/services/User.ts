@@ -1,5 +1,6 @@
 import { IUserService } from "../interfaces/Service";
 import { User } from "../models/User";
+import { UserLogin } from "../models/UserLogin";
 import { UserRepository } from "../repositories/User";
 import bcrypt from 'bcrypt';
 
@@ -10,16 +11,22 @@ export class UserService implements IUserService {
     this.userRepo = new UserRepository;
   }
 
+  async loginUser(user: UserLogin): Promise<User | null> {
+    const loginUser: User | null = await this.userRepo.loginUser(user);
+
+    return loginUser;
+  }
+
   async listUsers(): Promise<User[]> {
     const users: User[] = await this.userRepo.listUsers();
 
     return users;
   }
 
-  async addUser(user: User): Promise<User | Error> {
+  async registerUser(user: User): Promise<User | Error> {
     user.password = await bcrypt.hash(user.password, 12);
 
-    const addUser: User | Error = await this.userRepo.addUser(user).catch(() => {
+    const addUser: User | Error = await this.userRepo.registerUser(user).catch(() => {
       return Error("User was existing!");
     });
 
@@ -27,7 +34,16 @@ export class UserService implements IUserService {
       return addUser;
     }
     
-    return addUser;
+    const respAddUser: User = {
+      id: addUser.id,
+      nama: addUser.nama,
+      username: addUser.username,
+      email: addUser.email,
+      password: addUser.password,
+      komentar: addUser.komentar
+    }
+    
+    return respAddUser;
   }
 
   async updateUser(id: number, user: User): Promise<User | null |Error> {
@@ -46,7 +62,16 @@ export class UserService implements IUserService {
       return updUser;
     }
 
-    return updUser;
+    const respUpdUser: User = {
+      id: updUser.id,
+      nama: updUser.nama,
+      username: updUser.username,
+      email: updUser.email,
+      password: updUser.password,
+      komentar: updUser.komentar
+    }
+
+    return respUpdUser;
   }
 
   async deleteUser(id: number): Promise<number> {

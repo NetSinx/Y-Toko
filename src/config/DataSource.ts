@@ -5,7 +5,7 @@ import { Product } from '../models/Product';
 import { Category } from '../models/Category';
 import { Comment } from '../models/Comment';
 
-dotenv.config({path: './src/.env'});
+dotenv.config();
 
 export class Config {
   host: string;
