@@ -6,8 +6,23 @@ import { IUserController } from "../interfaces/Controller";
 import { validate } from "class-validator";
 import { UserLogin } from "../models/UserLogin";
 import { JWTAuthToken } from "../middleware/JWTAuthToken";
+import { doubleCsrf } from "csrf-csrf";
 
 export class UserController implements IUserController {
+  async genCSRFToken(req: Request, res: Response): Promise<void> {
+    const { generateToken } = doubleCsrf({getSecret: () => "yasinganteng_15"});
+
+    const csrfToken = generateToken(req, res, true);
+    
+    const respToClient = {
+      code: res.statusCode,
+      status: "OK",
+      token: csrfToken
+    }
+
+    res.json(respToClient);
+  }
+
   async loginUser(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
     
@@ -35,13 +50,13 @@ export class UserController implements IUserController {
           respToClient = {
             code: res.status(401).statusCode,
             status: "Unauthorized",
-            message: err
+            message: "Incorrect username / password."
           };
       
           res.status(401).json(respToClient);
         } else {
           if (login.email === "yasin03ckm@gmail.com") {
-            const jwtToken: string = await new JWTAuthToken().signJWT({isAdmin: true});
+            const jwtToken: string = await new JWTAuthToken().signJWT(true);
     
             const respToken = {
               code: res.statusCode,
@@ -51,7 +66,7 @@ export class UserController implements IUserController {
         
             res.json(respToken);
           } else {
-            const jwtToken: string = await new JWTAuthToken().signJWT({isAdmin: false});
+            const jwtToken: string = await new JWTAuthToken().signJWT(false);
     
             const respToken = {
               code: res.statusCode,

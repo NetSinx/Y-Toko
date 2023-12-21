@@ -6,6 +6,7 @@ import { ProductController } from "./controllers/Product";
 import { CategoryController } from "./controllers/Category";
 import { Routes } from "./config/Routes";
 import { CommentController } from "./controllers/Comment";
+import cookieParser from 'cookie-parser';
 
 class App {
   app: Application;
@@ -30,7 +31,7 @@ class App {
     this.commentController = new CommentController;
 
     this.app.use(express.json());
-
+    this.app.use(cookieParser("this is a value for request cookie"));
     this.routesApp = new Routes;
     this.routesApp.categoryRoute(this.app, this.categoryController);
     this.routesApp.productRoute(this.app, this.productController);

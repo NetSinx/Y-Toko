@@ -13,8 +13,18 @@ export class UserService implements IUserService {
 
   async loginUser(user: UserLogin): Promise<User | null> {
     const loginUser: User | null = await this.userRepo.loginUser(user);
+    
+    if (!loginUser) {
+      return loginUser;
+    } else {
+      const verifyPassword: boolean = await bcrypt.compare(user.password, loginUser.password)
 
-    return loginUser;
+      if (!verifyPassword) {
+        return null;
+      } else {
+        return loginUser;
+      }
+    }
   }
 
   async listUsers(): Promise<User[]> {
