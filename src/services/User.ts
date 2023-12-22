@@ -50,7 +50,9 @@ export class UserService implements IUserService {
       username: addUser.username,
       email: addUser.email,
       password: addUser.password,
-      komentar: addUser.komentar
+      komentar: addUser.komentar,
+      cart: addUser.cart,
+      order: addUser.order
     }
     
     return respAddUser;
@@ -78,7 +80,9 @@ export class UserService implements IUserService {
       username: updUser.username,
       email: updUser.email,
       password: updUser.password,
-      komentar: updUser.komentar
+      komentar: updUser.komentar,
+      cart: updUser.cart,
+      order: updUser.order
     }
 
     return respUpdUser;

@@ -27,6 +27,10 @@ export class Product {
 
   @Column({type: 'integer'})
   @IsNotEmpty()
+  stok: number;
+
+  @Column({type: 'integer'})
+  @IsNotEmpty()
   harga: number;
 
   @OneToMany(() => Comment, (comment) => comment.produk)

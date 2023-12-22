@@ -19,19 +19,17 @@ export class Routes implements IRoutes {
   categoryRoute(app: Application, controller: CategoryController): void {
     app.route("/category").get(controller.listCategories);
     app.route("/category/:id").get(controller.getCategory);
-    app.use(this.middleware.AuthAdmin);
-    app.route("/category").post(controller.addCategory);
-    app.route("/category/:id").put(controller.updateCategory);
-    app.route("/category/:id").delete(controller.deleteCategory);
+    app.route("/category").post(this.middleware.AuthAdmin, controller.addCategory);
+    app.route("/category/:id").put(this.middleware.AuthAdmin, controller.updateCategory);
+    app.route("/category/:id").delete(this.middleware.AuthAdmin, controller.deleteCategory);
   }
   
   productRoute(app: Application, controller: ProductController): void {
     app.route("/product").get(controller.listProducts);
+    app.route("/product").post(this.middleware.AuthAdmin, controller.addProduct);
+    app.route("/product/:id").put(this.middleware.AuthAdmin, controller.updateProduct);
+    app.route("/product/:id").delete(this.middleware.AuthAdmin, controller.deleteProduct);
     app.route("/product/:id").get(controller.getProduct);
-    app.use(this.middleware.AuthAdmin);
-    app.route("/product").post(controller.addProduct);
-    app.route("/product/:id").put(controller.updateProduct);
-    app.route("/product/:id").delete(controller.deleteProduct);
   }
 
   userRoute(app: Application, controller: UserController): void {
@@ -46,11 +44,10 @@ export class Routes implements IRoutes {
   }
 
   commentRoute(app: Application, controller: CommentController): void {
-    app.use(this.middleware.AuthUser);
-    app.route("/comment").get(controller.listComments);
-    app.route("/comment").post(controller.addComment);
-    app.route("/comment/:id").put(controller.updateComment);
-    app.route("/comment/:id").delete(controller.updateComment);
-    app.route("/comment/:id").get(controller.updateComment);
+    app.route("/comment").get(this.middleware.AuthUser, controller.listComments);
+    app.route("/comment").post(this.middleware.AuthUser, controller.addComment);
+    app.route("/comment/:id").put(this.middleware.AuthUser, controller.updateComment);
+    app.route("/comment/:id").delete(this.middleware.AuthUser, controller.updateComment);
+    app.route("/comment/:id").get(this.middleware.AuthUser, controller.updateComment);
   }
 }

@@ -1,6 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Comment } from "./Comment";
 import { IsEmail, IsNotEmpty, Matches, MaxLength, MinLength } from "class-validator";
+import { Cart } from "./Cart";
+import { Order } from "./Order";
 
 @Entity()
 export class User {
@@ -31,4 +33,10 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   komentar: Comment[];
+
+  @ManyToOne(() => Cart, (cart) => cart.user)
+  cart: Cart[];
+
+  @ManyToOne(() => Order, (order) => order.user)
+  order: Order[];
 }

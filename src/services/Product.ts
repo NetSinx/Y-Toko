@@ -24,7 +24,18 @@ export class ProductService implements IProductService {
     if (addProduct instanceof Error) {
       return addProduct;
     } else {
-      return addProduct;
+      const result: Product = {
+        id: addProduct.id,
+        nama: addProduct.nama,
+        gambar: addProduct.gambar,
+        kategori: addProduct.kategori,
+        deskripsi: addProduct.deskripsi,
+        stok: addProduct.stok,
+        harga: addProduct.harga,
+        komentar: addProduct.komentar
+      }
+
+      return result;
     }
   }
 
@@ -47,8 +58,9 @@ export class ProductService implements IProductService {
       gambar: updProduct.gambar,
       deskripsi: updProduct.deskripsi,
       kategori: updProduct.kategori,
+      stok: updProduct.stok,
       harga: updProduct.harga,
-      komentar: updProduct.komentar
+      komentar: updProduct.komentar,
     }
     
     return product;
@@ -65,6 +77,10 @@ export class ProductService implements IProductService {
 
   async getProduct(id: number): Promise<Product | null> {
     const getProduct: Product | null = await this.productRepo.getProduct(id);
+
+    if (!getProduct) {
+      return getProduct;
+    }
 
     return getProduct;
   }

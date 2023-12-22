@@ -3,6 +3,8 @@ import { Product } from "../models/Product";
 import { User } from "../models/User";
 import { Comment } from "../models/Comment";
 import { UserLogin } from "../models/UserLogin";
+import { Cart } from "../models/Cart";
+import { Order } from "../models/Order";
 
 export interface IUserRepository {
   listUsers(): Promise<User[]>;
@@ -35,4 +37,20 @@ export interface ICommentRepository {
   updateComment(id: number, comment: Comment): Promise<Comment>;
   deleteComment(id: number): Promise<number>;
   getComment(id: number): Promise<Comment | null>;
+}
+
+export interface ICartRepository {
+  listCarts(): Promise<Cart[]>;
+  addCart(cart: Cart): Promise<Cart>;
+  updateCart(id: number, cart: Cart): Promise<Cart>;
+  deleteCart(id: number): Promise<number>;
+  getCart(id: number): Promise<Cart | null>;
+}
+
+export interface IOrderRepository {
+  listOrders(): Promise<Order[]>;
+  addOrder(order: Order): Promise<Order>;
+  updateOrder(id: number, order: Order): Promise<Order>;
+  deleteOrder(id: number): Promise<number>;
+  getOrder(id: number): Promise<Order | null>;
 }

@@ -32,3 +32,19 @@ export interface ICommentController {
   deleteComment(req: Request, res: Response): Promise<void>;
   getComment(req: Request, res: Response): Promise<void>;
 }
+
+export interface ICartController {
+  listCarts(req: Request, res: Response): Promise<void>;
+  addCart(req: Request, res: Response): Promise<void>;
+  updateCart(req: Request, res: Response): Promise<void>;
+  deleteCart(req: Request, res: Response): Promise<void>;
+  getCart(req: Request, res: Response): Promise<void>;
+}
+
+export interface IOrderController {
+  listOrders(req: Request, res: Response): Promise<void>;
+  addOrder(req: Request, res: Response): Promise<void>;
+  updateOrder(req: Request, res: Response): Promise<void>;
+  deleteOrder(req: Request, res: Response): Promise<void>;
+  getOrder(req: Request, res: Response): Promise<void>;
+}

@@ -1,6 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "./Product";
 import { IsNotEmpty, MaxLength } from 'class-validator';
+import { Cart } from "./Cart";
+import { Order } from "./Order";
 
 @Entity()
 export class Category {
@@ -14,4 +16,10 @@ export class Category {
 
   @OneToMany(() => Product, (product) => product.kategori)
   product: Product[];
+
+  @OneToMany(() => Cart, (cart) => cart.kategori)
+  cart: Cart[];
+
+  @OneToMany(() => Order, (order) => order.kategori)
+  order: Order[];
 }

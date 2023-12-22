@@ -4,6 +4,8 @@ import { User } from '../models/User';
 import { Product } from '../models/Product';
 import { Category } from '../models/Category';
 import { Comment } from '../models/Comment';
+import { Cart } from '../models/Cart';
+import { Order } from '../models/Order';
 
 dotenv.config();
 
@@ -28,7 +30,7 @@ export class Config {
       username: this.username,
       password: this.password,
       database: this.database,
-      entities: [User, Product, Category, Comment],
+      entities: [User, Product, Category, Comment, Cart, Order],
       migrations: ["./src/migrations/*.ts"],
       synchronize: false,
       logging: true

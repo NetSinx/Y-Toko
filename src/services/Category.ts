@@ -27,7 +27,9 @@ export class CategoryService implements ICategoryService {
     category = {
       id: addCategory.id,
       nama: addCategory.nama,
-      product: addCategory.product
+      product: addCategory.product,
+      cart: addCategory.cart,
+      order: addCategory.order
     }
 
     return category;
@@ -46,7 +48,9 @@ export class CategoryService implements ICategoryService {
     const reqUpdProduct: Category = {
       id: id,
       nama: category.nama,
-      product: category.product
+      product: category.product,
+      cart: category.cart,
+      order: category.order
     }
 
     const updCategory: Category | Error = await this.categoryRepo.updateCategory(id, reqUpdProduct).catch(() => Error("Category was existing!"));
@@ -57,7 +61,9 @@ export class CategoryService implements ICategoryService {
       category = {
         id: id,
         nama: updCategory.nama,
-        product: updCategory.product
+        product: updCategory.product,
+        cart: updCategory.cart,
+        order: updCategory.order
       }
 
       return category;

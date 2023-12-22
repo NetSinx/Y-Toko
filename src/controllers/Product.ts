@@ -55,20 +55,10 @@ export class ProductController implements IProductController {
           return;
         }
 
-        const product: Product = {
-          id: addProduct.id,
-          nama: addProduct.nama,
-          gambar: addProduct.gambar,
-          kategori: addProduct.kategori,
-          deskripsi: addProduct.deskripsi,
-          harga: addProduct.harga,
-          komentar: addProduct.komentar
-        }
-
         respToClient = {
           code: res.statusCode,
           status: "OK",
-          data: product
+          data: addProduct
         };
 
         res.json(respToClient);
@@ -121,20 +111,10 @@ export class ProductController implements IProductController {
           res.status(404).json(respToClient);
           return;
         } else {
-          const product: Product = {
-            id: id,
-            nama: updProduct.nama,
-            gambar: updProduct.gambar,
-            kategori: updProduct.kategori,
-            deskripsi: updProduct.deskripsi,
-            harga: updProduct.harga,
-            komentar: updProduct.komentar
-          }
-
           respToClient = {
             code: res.statusCode,
             status: "OK",
-            data: product
+            data: updProduct
           };
 
           res.json(respToClient);
@@ -188,20 +168,10 @@ export class ProductController implements IProductController {
       return;
     }
 
-    const product: Product = {
-      id: getProduct.id,
-      nama: getProduct.nama,
-      gambar: getProduct.gambar,
-      deskripsi: getProduct.deskripsi,
-      kategori: getProduct.kategori,
-      harga: getProduct.harga,
-      komentar: getProduct.komentar
-    }
-
     respToClient = {
       code: res.statusCode,
       status: "OK",
-      data: product
+      data: getProduct
     };
 
     res.json(respToClient);

@@ -1,5 +1,7 @@
+import { Cart } from "../models/Cart";
 import { Category } from "../models/Category";
 import { Comment } from "../models/Comment";
+import { Order } from "../models/Order";
 import { Product } from "../models/Product";
 import { User } from "../models/User";
 import { UserLogin } from "../models/UserLogin";
@@ -35,4 +37,20 @@ export interface ICommentService {
   updateComment(id: number, comment: Comment): Promise<Comment | null>;
   deleteComment(id: number): Promise<number>;
   getComment(id: number): Promise<Comment | null>;
+}
+
+export interface ICartService {
+  listCarts(): Promise<Cart[]>;
+  addCart(cart: Cart): Promise<Cart | Error>;
+  updateCart(id: number, cart: Cart): Promise<Cart | null>;
+  deleteCart(id: number): Promise<number>;
+  getCart(id: number): Promise<Cart | null>;
+}
+
+export interface IOrderService {
+  listOrders(): Promise<Order[]>;
+  addOrder(order: Order): Promise<Order | Error>;
+  updateOrder(id: number, order: Order): Promise<Order | null>;
+  deleteOrder(id: number): Promise<number>;
+  getOrder(id: number): Promise<Order | null>;
 }
