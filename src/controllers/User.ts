@@ -12,7 +12,7 @@ export class UserController implements IUserController {
   async genCSRFToken(req: Request, res: Response): Promise<void> {
     const { generateToken } = doubleCsrf({getSecret: () => "netsinx_15"});
 
-    const csrfToken = generateToken(req, res, true);
+    const csrfToken = generateToken(req, res);
     
     const respToClient = {
       code: res.statusCode,

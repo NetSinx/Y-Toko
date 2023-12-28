@@ -26,6 +26,7 @@ export class ProductController implements IProductController {
     product.gambar = req.body.gambar;
     product.deskripsi = req.body.deskripsi;
     product.kategori = req.body.kategori;
+    product.stok = req.body.stok;
     product.harga = req.body.harga;
     product.komentar = req.body.komentar;
 
@@ -39,7 +40,7 @@ export class ProductController implements IProductController {
           message: err
         };
   
-        res.status(409).json(respToClient);
+        res.status(400).json(respToClient);
         return;
       } else {
         const addProduct: Product | Error = await productService.addProduct(req.body);

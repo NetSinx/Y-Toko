@@ -42,14 +42,14 @@ export interface ICommentService {
 export interface ICartService {
   listCarts(): Promise<Cart[]>;
   addCart(cart: Cart): Promise<Cart | Error>;
-  updateCart(id: number, cart: Cart): Promise<Cart | null>;
+  updateCart(id: number, cart: Cart): Promise<Cart | Error | null>;
   deleteCart(id: number): Promise<number>;
   getCart(id: number): Promise<Cart | null>;
 }
 
 export interface IOrderService {
   listOrders(): Promise<Order[]>;
-  addOrder(order: Order): Promise<Order | Error>;
+  addOrder(order: Order): Promise<Order>;
   updateOrder(id: number, order: Order): Promise<Order | null>;
   deleteOrder(id: number): Promise<number>;
   getOrder(id: number): Promise<Order | null>;

@@ -7,6 +7,9 @@ import { CategoryController } from "./controllers/Category";
 import { Routes } from "./config/Routes";
 import { CommentController } from "./controllers/Comment";
 import cookieParser from 'cookie-parser';
+import { CartController } from "./controllers/Cart";
+import { OrderController } from "./controllers/Order";
+import cors from 'cors';
 
 class App {
   app: Application;
@@ -17,6 +20,8 @@ class App {
   productController: ProductController;
   categoryController: CategoryController;
   commentController: CommentController;
+  cartController: CartController;
+  orderController: OrderController;
   routesApp: Routes;
 
   constructor() {
@@ -29,15 +34,20 @@ class App {
     this.productController = new ProductController;
     this.categoryController = new CategoryController;
     this.commentController = new CommentController;
+    this.cartController = new CartController;
+    this.orderController = new OrderController;
 
     this.app.use(express.json());
     this.app.use(cookieParser("this is a value for request cookie"));
+    this.app.use(cors({origin: 'http://localhost:4200', optionsSuccessStatus: 200}))
     this.routesApp = new Routes;
     this.routesApp.categoryRoute(this.app, this.categoryController);
     this.routesApp.productRoute(this.app, this.productController);
     this.routesApp.userRoute(this.app, this.userController);
     this.routesApp.categoryRoute(this.app, this.categoryController);
     this.routesApp.commentRoute(this.app, this.commentController);
+    this.routesApp.cartRoute(this.app, this.cartController);
+    this.routesApp.orderRoute(this.app, this.orderController);
   }
 }
 

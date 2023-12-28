@@ -71,14 +71,14 @@ export class AuthMiddleware {
     }
   }
 
-  async checkingTokenCSRF(err: Error, req: Request, res: Response, next: NextFunction): Promise<void> {
+  checkingTokenCSRF(err: Error, req: Request, res: Response, next: NextFunction): void {
     const { invalidCsrfTokenError } = doubleCsrf({getSecret: () => "yasinganteng_15"});
 
     if (err === invalidCsrfTokenError) {
       const respToClient: ResponseClient = {
         code: res.status(401).statusCode,
         status: "Unauthorized",
-        message: "Your token csrf is invalid"
+        message: err.message
       }
 
       res.status(401).json(respToClient);

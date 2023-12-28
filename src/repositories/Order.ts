@@ -18,18 +18,30 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async addOrder(order: Order): Promise<Order> {
-    throw new Error("Method not implemented.");
+    const orderRepo = (await this.db).getRepository(Order);
+    await orderRepo.createQueryBuilder().insert().values(order).execute();
+
+    return order;
   }
 
   async updateOrder(id: number, order: Order): Promise<Order> {
-    throw new Error("Method not implemented.");
+    const orderRepo = (await this.db).getRepository(Order);
+    await orderRepo.createQueryBuilder().update().where("id = :id", {id: id}).set(order).execute();
+
+    return order;
   }
 
   async deleteOrder(id: number): Promise<number> {
-    throw new Error("Method not implemented.");
+    const orderRepo = (await this.db).getRepository(Order);
+    const delOrder = await orderRepo.createQueryBuilder().delete().where("id = :id", {id: id}).execute();
+
+    return delOrder.affected!;
   }
 
   async getOrder(id: number): Promise<Order | null> {
-    throw new Error("Method not implemented.");
+    const orderRepo = (await this.db).getRepository(Order);
+    const getOrder: Order | null = await orderRepo.createQueryBuilder().select().where("id = :id", {id: id}).getOne();
+
+    return getOrder;
   }
 }
