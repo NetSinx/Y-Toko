@@ -5,12 +5,12 @@
   "main": "./src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/index.ts",
-    "migrate-create": "npx typeorm-ts-node-commonjs migration:create ./src/migrations/migrations",
-    "migrate-gen": "npx typeorm-ts-node-commonjs migration:generate ./src/migrations/migrations -d ./src/config/DataSource.ts",
-    "migrate-run": "npx typeorm-ts-node-commonjs migration:run -d ./src/config/DataSource.ts",
-    "migrate-revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/config/DataSource.ts",
-    "schema-drop": "npx typeorm-ts-node-commonjs schema:drop -d ./src/config/DataSource.ts"
+    "start": "nodemon ./src/server/index.ts",
+    "migrate-create": "npx typeorm-ts-node-commonjs migration:create ./src/server/migrations/migrations",
+    "migrate-gen": "npx typeorm-ts-node-commonjs migration:generate ./src/server/migrations/migrations -d ./src/server/config/DataSource.ts",
+    "migrate-run": "npx typeorm-ts-node-commonjs migration:run -d ./src/server/config/DataSource.ts",
+    "migrate-revert": "npx typeorm-ts-node-commonjs migration:revert -d ./src/server/config/DataSource.ts",
+    "schema-drop": "npx typeorm-ts-node-commonjs schema:drop -d ./src/server/config/DataSource.ts"
   },
   "keywords": [
     "e-commerce",
